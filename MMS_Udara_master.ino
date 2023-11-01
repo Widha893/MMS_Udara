@@ -1,6 +1,7 @@
 #include "GPS.h"
 #include "CJMCU6814.h"
 #include "DustSensor.h"
+#include "JSON.h"
 #include <PubSubClient.h>
 #include <WiFi.h>
 
