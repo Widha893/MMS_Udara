@@ -11,6 +11,9 @@ const char* mqtt_username = "widha893";
 const char* mqtt_pass = "Widha123080903";
 const int mqtt_port = 1883;
 
+WiFiClient espclient;
+PubSubClient client(espclient);
+
 void setupWifi(){
   delay(100);
   Serial.print("Connecting to ");
