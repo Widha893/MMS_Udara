@@ -1,7 +1,8 @@
 // Kalman Filter
+#pragma once
 float Xt, Xt_update, Xt_prev;
-float Pt, Pt_update, Pt_prev;
-float Kt, R, Q;
+float Pt, Pt_update, Pt_prev = 1;
+float Kt, R = 100, Q = 1;
 float kalman_data;
 
 void kalman_filter(float _data_){

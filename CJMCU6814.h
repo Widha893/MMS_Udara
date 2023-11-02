@@ -1,12 +1,20 @@
+#pragma once
 #include <math.h>
-#define NH3PIN   35
-#define COPIN    34
-#define OXPIN    32
+#define NH3PIN   36
+#define COPIN    30
+#define OXPIN    34
 
 // CJMCU Sensor
 uint16_t NH3baseR;
 uint16_t REDbaseR;
 uint16_t OXbaseR;
+
+struct{
+  float NO2_res;
+  float NO2_base;
+  float NO2_ratio;
+  float NO2_ppm; 
+} no2;
 
 enum channel {
   CH_NH3, CH_RED, CH_OX
@@ -120,22 +128,6 @@ void calibrateCJMCU() {
     pntrRED = (pntrRED + 1) % seconds;
     pntrOX = (pntrOX + 1) % seconds;
 
-    if(!NH3stable) {
-      Serial.print("(NH3:");
-      Serial.print(abs(fltSumNH3 / seconds - curNH3));
-      Serial.print(")");
-    }
-    if(!REDstable) {
-      Serial.print("(RED:");
-      Serial.print(abs(fltSumNH3 / seconds - curRED));
-      Serial.print(")");
-    }
-    if(!OXstable) {
-      Serial.print("(OX:");
-      Serial.print(abs(fltSumNH3 / seconds - curOX));
-      Serial.print(")");
-    }
-
   } while (!NH3stable || !REDstable || !OXstable);
 
   NH3baseR = fltSumNH3 / seconds;
@@ -181,4 +173,15 @@ float measureCJMCU(gas_t gas) {
   }
 
   return isnan(c) ? -1 : c;
+}
+
+void CJMCUInit(){
+  calibrateCJMCU();
+}
+
+void NO2_update(){
+  no2.NO2_res = getResistance(CH_OX);
+  no2.NO2_base = getBaseResistance(CH_OX);
+  no2.NO2_ratio = getCurrentRatio(CH_OX);
+  no2.NO2_ppm = measureCJMCU(NO2);
 }

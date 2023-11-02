@@ -1,7 +1,8 @@
+#pragma once
 #include <TinyGPSPlus.h>
 #include <SoftwareSerial.h>
-#define GPS_RX 4
-#define GPS_TX 3
+#define GPS_RX 16
+#define GPS_TX 17
 
 static const int GPS_baudrate = 9600;
 
@@ -14,7 +15,7 @@ struct{
   double longitude;
 }GPS_data;
 
-void gpsSetup(){
+void gpsInit(){
   _gps_.begin(GPS_baudrate);
   Serial.println("GPS setup complete!");
 }
