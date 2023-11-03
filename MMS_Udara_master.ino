@@ -1,6 +1,10 @@
 #include "GPS.h"
 #include "CJMCU6814.h"
 #include "DustSensor.h"
+#include "CarbonMonoxideSensor.h"
+#include "HydrogenSulfide.h"
+#include "ozoneSensor.h"
+#include "Sensors.h"
 #include "JSON.h"
 #include "DataSerialization.h"
 #include <PubSubClient.h>
@@ -51,21 +55,15 @@ void reconnect(){
 void setup() {
   Serial.begin(115200);
   setupWifi();
-  dustSensorInit();
-  gpsInit();
-  CJMCUInit();
+  sensorInit();
   client.setServer(mqtt_broker,mqtt_port);
 }
 
 void loop() {
-  updateDustDensity();
-  updateGPS();
-  NO2_update();
+  sensorUpdate();
   if(!client.connected()){
     reconnect();
   }
   nodeUpdate();
-//  serializedData = "test";
   client.publish("/sipuber/dataTest",json.c_str()); 
-//  }
 }
