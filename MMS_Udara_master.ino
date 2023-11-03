@@ -10,14 +10,14 @@
 #include <PubSubClient.h>
 #include <WiFi.h>
 
-long timelast,timenow,dt;
+const long publishInterval = 2000;
 
 const char* ssid = "Yahaha";
 const char* password = "yangituloh";
-const char* mqtt_broker = "broker.hivemq.com";
+const char* mqtt_broker = "193.203.160.173";
 const char* mqtt_username = "widha893";
 const char* mqtt_pass = "Widha123080903";
-const char* mqtt_topic = "sipuber/data";
+const char* mqtt_topic = "/sipuber/data";
 const int mqtt_port = 1883;
 String message = "Test";
 
@@ -42,7 +42,7 @@ void reconnect(){
   while(!client.connected()){
     Serial.print("\nConnected to");
     Serial.println(mqtt_broker);
-      if(client.connect("/sipuber/dataTest")){
+      if(client.connect("/sipuber/data")){
         Serial.print("\nConnected to");
         Serial.println(mqtt_broker);
       }else{
@@ -59,11 +59,25 @@ void setup() {
   client.setServer(mqtt_broker,mqtt_port);
 }
 
+//void loop() {
+//  sensorUpdate();
+//  if(!client.connected()){
+//    reconnect();
+//  }
+//  nodeUpdate();
+//  client.publish("/sipuber/data",json.c_str()); 
+//}
 void loop() {
   sensorUpdate();
-  if(!client.connected()){
+  unsigned long currentTime = millis();
+
+  if (!client.connected()) {
     reconnect();
   }
-  nodeUpdate();
-  client.publish("/sipuber/dataTest",json.c_str()); 
+
+  if (currentTime - lastPublishTime >= publishInterval) {
+    lastPublishTime = currentTime;
+    nodeUpdate();
+    client.publish("/sipuber/data", json.c_str());
+  }
 }
